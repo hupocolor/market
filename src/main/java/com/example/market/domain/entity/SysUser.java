@@ -29,6 +29,12 @@ public class SysUser {
     private String email;
     //0男1女
     private Integer sex;
+    private Double money;
+
+    public SysUser buy(Double price){
+        this.money -= price;
+        return this;
+    }
 
 }
 

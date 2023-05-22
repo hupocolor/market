@@ -29,7 +29,9 @@ public class ResponseResult<T> implements Serializable {
         this.msg = msg;
         this.data = data;
     }
-
+    public static ResponseResult errorResult(){
+        return new ResponseResult(999,"发生未知错误");
+    }
     public static ResponseResult errorResult(int code,String msg){
         ResponseResult result = new ResponseResult();
         return result.error(code,msg);

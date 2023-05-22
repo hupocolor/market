@@ -10,12 +10,13 @@ public enum AppHttpCodeEnum {
     SYSTEM_ERROR(500,"出现错误"),
     USERNAME_EXIST(501,"用户名已存在"),
     PHONENUMBER_EXIST(502,"手机号已存在"),
-    EMAIL_EXIST(503,"邮箱已存在"),
+    EMAIL_EXIST(503,"邮箱已存在或格式错误"),
     REQUIRE_USERNAME(504,"需填写用户名"),
     LOGIN_ERROR(505,"用户名或密码错误"),
     CONTENT_NOT_NULL(506, "内容不能为空"),
     FILE_TYPE_ERROR(507, "文件类型错误,只能是png或者jpg"),
-    USER_INFO_ERROR(508, "用户信息不能为空");
+    USER_INFO_ERROR(508, "用户信息不能为空"),
+    MONEY_NUMBER_ERROR(509,"当前余额不足");
 
 
     int code;

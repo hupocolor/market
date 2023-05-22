@@ -14,5 +14,9 @@ import org.springframework.http.ResponseEntity;
 public interface SysUserService extends IService<SysUser> {
 
     ResponseResult login(SysUser user);
+
+    ResponseResult register(SysUser user);
+
+    ResponseResult getUserShow(Integer id);
 }
 
