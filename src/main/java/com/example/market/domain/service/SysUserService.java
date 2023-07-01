@@ -18,5 +18,11 @@ public interface SysUserService extends IService<SysUser> {
     ResponseResult register(SysUser user);
 
     ResponseResult getUserShow(Integer id);
+
+    ResponseResult getUserInfo();
+
+    ResponseResult logout();
+
+    ResponseResult updateUserInfo(SysUser user);
 }
 

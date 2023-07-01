@@ -1,7 +1,7 @@
 package com.example.market.domain.service.impl;
 
+import com.alibaba.fastjson.JSON;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.baomidou.mybatisplus.extension.conditions.query.LambdaQueryChainWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.example.market.domain.entity.SysUser;
@@ -39,9 +39,11 @@ public class ItemServiceImpl extends ServiceImpl<ItemMapper, Item> implements It
             if (Strings.isBlank(itemDto.getName())) resCode = AppHttpCodeEnum.SYSTEM_ERROR;
             else if(getOne(new LambdaQueryWrapper<Item>().eq(Item::getName,itemDto.getName()))!=null) resCode = AppHttpCodeEnum.SYSTEM_ERROR;
             else {
-                System.out.println("item以保存");
+                SysUser redisUser = JSON.parseObject(redisCache.getCacheObject("userInfo").toString(), SysUser.class);
                 Item item = ClassMapper.mapClass(itemDto, Item.class);
-                System.out.println(item);
+                item.setSellerId(redisUser.getUserid());
+                item.setSeller(redisUser.getUsername());
+                System.out.println("item保存:"+item);
                 save(item);
             }
         } catch (IllegalAccessException | InstantiationException e) {

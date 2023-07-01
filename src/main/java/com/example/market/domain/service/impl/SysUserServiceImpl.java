@@ -1,5 +1,6 @@
 package com.example.market.domain.service.impl;
 
+import com.alibaba.fastjson.JSON;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.example.market.domain.mapper.SysUserMapper;
@@ -14,6 +15,8 @@ import org.springframework.boot.autoconfigure.data.redis.RedisProperties;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+
+import java.util.Objects;
 
 /**
  * 系统用户(SysUser)表服务实现类
@@ -35,8 +38,8 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
         if(Strings.isBlank(user.getUserpassword()) ||Strings.isBlank(user.getUsername())) {
             return ResponseResult.errorResult(AppHttpCodeEnum.USER_INFO_ERROR);
         }
-        //若登录成功则对增加redis缓存
-        if (getOne(wrapper)!=null) redisCache.setCacheObject("userId",getOne(wrapper).getUserid());
+        //若登录成功则对增加redis缓存,将登录的用户状态信息存储到redis中
+        if (getOne(wrapper)!=null) redisCache.setCacheObject("userInfo",getOne(wrapper));
         return getOne(wrapper) == null ? ResponseResult.errorResult(AppHttpCodeEnum.LOGIN_ERROR):ResponseResult.okResult(getOne(wrapper));
     }
 
@@ -77,6 +80,31 @@ public class SysUserServiceImpl extends ServiceImpl<SysUserMapper, SysUser> impl
             return ResponseResult.errorResult();
         }
         return ResponseResult.okResult(userShow);
+    }
+
+    @Override
+    public ResponseResult getUserInfo() {
+        SysUser user = JSON.parseObject(redisCache.getCacheObject("userInfo").toString(), SysUser.class);
+        if (user == null) return ResponseResult.errorResult();
+        return ResponseResult.okResult(user);
+    }
+
+    @Override
+    public ResponseResult logout() {
+        redisCache.deleteObject("userInfo");
+        return ResponseResult.okResult();
+    }
+
+    @Override
+    public ResponseResult updateUserInfo(SysUser user) {
+        SysUser redisUser = JSON.parseObject(redisCache.getCacheObject("userInfo").toString(), SysUser.class);
+        Integer id = redisUser.getUserid();
+        if (!Strings.isBlank(user.getUsername())) redisUser.setUsername(user.getUsername());
+        if (!Strings.isBlank(user.getEmail())) redisUser.setEmail(user.getEmail());
+        if (!Objects.isNull(user.getSex())) redisUser.setSex(user.getSex());
+        updateById(redisUser);
+        redisCache.setCacheObject("userInfo",redisUser);
+        return ResponseResult.okResult();
     }
 }
 

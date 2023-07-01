@@ -17,7 +17,6 @@ public class UserController {
     SysUserService userService;
     @PostMapping("/login")
     public ResponseResult login(@RequestBody SysUser user){
-        System.out.println("方法被调用");
         return userService.login(user);
     }
     @PostMapping("/register")
@@ -33,5 +32,10 @@ public class UserController {
     @GetMapping("/getUserShow")
     public ResponseResult getUserShow(Integer id){
         return userService.getUserShow(id);
+    }
+
+    @PostMapping("/logout")
+    public ResponseResult logout(){
+        return userService.logout();
     }
 }
